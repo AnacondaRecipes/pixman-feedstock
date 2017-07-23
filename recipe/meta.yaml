@@ -19,13 +19,17 @@ build:
     - vc14  # [win and py35]
 
 requirements:
+  host:
+    - vc 9  # [win and py27]
+    - vc 10  # [win and py34]
+    - vc 14  # [win and py35]
+
   build:
     - python  # [win]
     - posix  # [win]
     - pkg-config  # [not win]
-    - vc 9  # [win and py27]
-    - vc 10  # [win and py34]
-    - vc 14  # [win and py35]
+    - {{ compiler('c') }}
+
   run:
     - vc 9  # [win and py27]
     - vc 10  # [win and py34]
