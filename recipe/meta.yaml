@@ -11,22 +11,16 @@ source:
     - no_test.patch  # [win]
 
 build:
-  number: 1
-  skip: True  # [win and py36]
-  features:
-    - vc9  # [win and py27]
-    - vc14  # [win and (py35 or py36)]
+  number: 2
+  run_exports:
+    # excellent: https://abi-laboratory.pro/tracker/timeline/pixman/
+    - {{ pin_subpackage('pixman')
 
 requirements:
   build:
-    - python  # [win]
     - posix  # [win]
     - pkg-config  # [not win]
-    - vc 9  # [win and py27]
-    - vc 14  # [win and (py35 or py36)]
-  run:
-    - vc 9  # [win and py27]
-    - vc 14  # [win and (py35 or py36)]
+    - {{ compiler('c') }}
 
 test:
   commands:
