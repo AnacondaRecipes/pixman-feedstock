@@ -7,6 +7,6 @@ fi
 
 ./configure --prefix=$PREFIX $OPTS
 
-make
+make -j${CPU_COUNT}
 make check
 make install
