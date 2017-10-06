@@ -12,13 +12,16 @@ source:
     - no_test.patch  # [win]
 
 build:
-  number: 1
+  number: 2
   features:
     - vc{{ vc }}     # [win]
+  run_exports:
+    # excellent: add new symbols sometimes, none removed.
+    #    https://abi-laboratory.pro/tracker/timeline/pixman/
+    - {{ pin_subpackage('pixman') }}
 
 requirements:
   build:
-    - python  # [win]
     - posix  # [win]
     - pkg-config  # [not win]
     - {{ compiler('c') }}
