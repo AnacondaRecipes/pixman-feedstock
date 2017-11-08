@@ -11,7 +11,7 @@ source:
     - no_test.patch  # [win]
 
 build:
-  number: 2
+  number: 3
   run_exports:
     # excellent: https://abi-laboratory.pro/tracker/timeline/pixman/
     - {{ pin_subpackage('pixman')
