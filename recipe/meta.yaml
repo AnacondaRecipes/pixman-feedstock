@@ -14,13 +14,14 @@ build:
   number: 3
   run_exports:
     # excellent: https://abi-laboratory.pro/tracker/timeline/pixman/
-    - {{ pin_subpackage('pixman')
+    - {{ pin_subpackage('pixman') }}
 
 requirements:
   build:
     - posix  # [win]
     - pkg-config  # [not win]
     - {{ compiler('c') }}
+    - make   # [unix]
 
 test:
   commands:
