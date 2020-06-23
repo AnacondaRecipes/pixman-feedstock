@@ -27,8 +27,6 @@ requirements:
 test:
   commands:
     - test -f ${PREFIX}/lib/libpixman-1.a  # [not win]
-    #- conda inspect linkages -p $PREFIX pixman  # [not win]
-    #- conda inspect objects -p $PREFIX pixman  # [osx]
 
 about:
   home: http://www.pixman.org/
