@@ -23,7 +23,7 @@ requirements:
     - pkg-config  # [not win]
     - {{ compiler('c') }}
     - make  # [unix]
-
+    - libtool  # [unix]
 test:
   commands:
     - test -f ${PREFIX}/lib/libpixman-1.a  # [not win]
