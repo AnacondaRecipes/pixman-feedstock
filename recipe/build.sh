@@ -20,5 +20,5 @@ make check
 make install
 
 # We can remove this when we start using the new conda-build.
-find $PREFIX -name '*.la' -delete
+find ${PREFIX} -type f -name "*.la" -exec rm -rf '{}' \; -print
 
