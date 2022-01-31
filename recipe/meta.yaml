@@ -24,7 +24,8 @@ requirements:
     - {{ compiler('c') }}
     - make  # [unix]
     - libtool  # [unix]
-test:
+    - m2-patch    # [win]
+ test:
   commands:
     - test -f ${PREFIX}/lib/libpixman-1.a  # [not win]
 
