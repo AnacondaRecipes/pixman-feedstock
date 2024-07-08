@@ -25,7 +25,8 @@ requirements:
     - make  # [unix]
     - libtool  # [unix]
     - m2-patch    # [win]
- test:
+
+test:
   commands:
     - test -f ${PREFIX}/lib/libpixman-1.a  # [not win]
 
