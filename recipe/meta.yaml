@@ -1,5 +1,5 @@
 {% set name = "pixman" %}
-{% set version = "0.40.0" %}
+{% set version = "0.46.4" %}
 
 package:
   name: {{ name }}
@@ -7,44 +7,49 @@ package:
 
 source:
   url: https://cairographics.org/releases/{{ name }}-{{ version }}.tar.gz
-  sha256: 6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc
+  sha256: d09c44ebc3bd5bee7021c79f922fe8fb2fb57f7320f55e97ff9914d2346a591c
+  patches:
+    - patches/0001-meson-darwin-versions.patch
 
 build:
-  number: 2
+  number: 0
   run_exports:
-    # excellent: add new symbols sometimes, none removed.
-    #    https://abi-laboratory.pro/tracker/timeline/pixman/
     - {{ pin_subpackage('pixman') }}
 
 requirements:
   build:
-    - {{ stdlib('c') }}
     - {{ compiler('c') }}
+    - {{ stdlib("c") }}
+    - {{ compiler('cxx') }}
     - meson
     - ninja-base
     - pkg-config
 
 test:
   commands:
-    - test -f ${PREFIX}/lib/libpixman-1${SHLIB_EXT}  # [not win]
-    - test -f $PREFIX/lib/pkgconfig/pixman-1.pc  # [not win]   
+    - test -f ${PREFIX}/lib/libpixman-1${SHLIB_EXT}        # [unix]
+    - test -f ${PREFIX}/lib/pkgconfig/pixman-1.pc          # [unix]
+    - test -f ${PREFIX}/include/pixman-1/pixman-version.h  # [unix]
+    - test -f ${PREFIX}/include/pixman-1/pixman.h          # [unix]
 
-    - if not exist %LIBRARY_BIN%\\pixman-1-0.dll exit 1  # [win]
-    - if not exist %LIBRARY_LIB%\\pixman-1.lib exit 1  # [win]
-    - if not exist %LIBRARY_LIB%\\pkgconfig\\pixman-1.pc exit 1  # [win]
-    
+    - if not exist %LIBRARY_INC%\\pixman-1\\pixman-version.h exit 1  # [win]
+    - if not exist %LIBRARY_INC%\\pixman-1\\pixman.h exit 2          # [win]
+    - if not exist %LIBRARY_BIN%\\pixman-1-0.dll exit 3              # [win]
+    - if not exist %LIBRARY_LIB%\\pixman-1.lib exit 4                # [win]
+    - if not exist %LIBRARY_LIB%\\pkgconfig\\pixman-1.pc exit 5       # [win]
 
 about:
-  home: https://www.pixman.org/
+  home: https://www.pixman.org
   license: MIT
   license_family: MIT
   license_file: COPYING
-  summary: 'A low-level software library for pixel manipulation.'
+  summary: A low-level software library for pixel manipulation.
   description: |
     Pixman is a low-level software library for pixel manipulation, providing
     features such as image compositing and trapezoid rasterization.
-  dev_url: https://gitlab.freedesktop.org/pixman/pixman
-  doc_url: https://gitlab.freedesktop.org/pixman/pixman
+  dev_url: https://cgit.freedesktop.org/pixman
+  # There is currently no documentation besides the source code itself. Questions about using pixman are welcome on the mailing list as well as on the #cairo IRC channel on FreeNode.
+  doc_url: https://cgit.freedesktop.org/pixman
 
 extra:
   recipe-maintainers:

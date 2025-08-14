@@ -1,19 +1,28 @@
 #!/bin/bash
 set -u
 
-export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$BUILD_PREFIX/lib/pkgconfig
+set -ex
 
-export ADDITIONAL_MESON_ARGS=(
-  --buildtype=release
-  --prefix="${PREFIX}"
-  --default-library=shared
-  --wrap-mode=nofallback
-  --libdir=lib
-)
+meson_config_args=()
 
-mkdir -p build
-meson setup build ${ADDITIONAL_MESON_ARGS[@]}
-meson compile -vC build -j ${CPU_COUNT}
-cd build && meson test
-cd ..
-meson install -C build
+if [[ $(uname) == Darwin ]]; then
+  meson_config_args+=(-Dopenmp=disabled)
+fi
+
+if [ "${target_platform}" == osx-arm64 ]; then
+  meson_config_args+=(-Da64-neon=disabled)
+fi
+
+meson_config_args+=(-Dtests=enabled)
+
+meson setup builddir \
+    ${MESON_ARGS} \
+    "${meson_config_args[@]}" \
+    --prefix=$PREFIX \
+    -Dlibdir=lib \
+    --default-library=shared \
+    --wrap-mode=nofallback \
+
+ninja -v -C builddir -j ${CPU_COUNT}
+ninja test -C builddir
+ninja -C builddir install -j ${CPU_COUNT}
