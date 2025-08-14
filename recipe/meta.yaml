@@ -1,17 +1,16 @@
+{% set name = "pixman" %}
 {% set version = "0.40.0" %}
 
 package:
-  name: pixman
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  url: http://cairographics.org/releases/pixman-{{ version }}.tar.gz
+  url: https://cairographics.org/releases/{{ name }}-{{ version }}.tar.gz
   sha256: 6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc
-  patches:
-    - no_test.patch  # [win]
 
 build:
-  number: 1
+  number: 2
   run_exports:
     # excellent: add new symbols sometimes, none removed.
     #    https://abi-laboratory.pro/tracker/timeline/pixman/
@@ -19,26 +18,33 @@ build:
 
 requirements:
   build:
-    - posix  # [win]
-    - pkg-config  # [not win]
+    - {{ stdlib('c') }}
     - {{ compiler('c') }}
-    - make  # [unix]
-    - libtool  # [unix]
-    - m2-patch    # [win]
+    - meson
+    - ninja-base
+    - pkg-config
 
 test:
   commands:
-    - test -f ${PREFIX}/lib/libpixman-1.a  # [not win]
+    - test -f ${PREFIX}/lib/libpixman-1${SHLIB_EXT}  # [not win]
+    - test -f $PREFIX/lib/pkgconfig/pixman-1.pc  # [not win]   
+
+    - if not exist %LIBRARY_BIN%\\pixman-1-0.dll exit 1  # [win]
+    - if not exist %LIBRARY_LIB%\\pixman-1.lib exit 1  # [win]
+    - if not exist %LIBRARY_LIB%\\pkgconfig\\pixman-1.pc exit 1  # [win]
+    
 
 about:
-  home: http://www.pixman.org/
+  home: https://www.pixman.org/
   license: MIT
+  license_family: MIT
   license_file: COPYING
   summary: 'A low-level software library for pixel manipulation.'
   description: |
     Pixman is a low-level software library for pixel manipulation, providing
     features such as image compositing and trapezoid rasterization.
-  dev_url: https://cgit.freedesktop.org/pixman/
+  dev_url: https://gitlab.freedesktop.org/pixman/pixman
+  doc_url: https://gitlab.freedesktop.org/pixman/pixman
 
 extra:
   recipe-maintainers:
