@@ -1,24 +1,19 @@
 #!/bin/bash
+set -u
 
-# Get an updated config.sub and config.guess
-cp -r ${BUILD_PREFIX}/share/libtool/build-aux/config.* .
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$BUILD_PREFIX/lib/pkgconfig
 
-OPTS=""
-if [[ $(uname) == Darwin ]]; then
-  OPTS="--disable-openmp"
-fi
-if [ "${target_platform}" == linux-ppc64le ]; then
-  OPTS="--disable-vmx "
-fi
+export ADDITIONAL_MESON_ARGS=(
+  --buildtype=release
+  --prefix="${PREFIX}"
+  --default-library=shared
+  --wrap-mode=nofallback
+  --libdir=lib
+)
 
-./configure --prefix=${PREFIX}  \
-            --host=${HOST}      \
-            $OPTS
-
-make -j${CPU_COUNT} ${VERBOSE_AT}
-make check
-make install
-
-# We can remove this when we start using the new conda-build.
-find ${PREFIX} -type f -name "*.la" -exec rm -rf '{}' \; -print
-
+mkdir -p build
+meson setup build ${ADDITIONAL_MESON_ARGS[@]}
+meson compile -vC build -j ${CPU_COUNT}
+cd build && meson test
+cd ..
+meson install -C build

@@ -1,23 +1,32 @@
-:: SSSE3 is returning errors when compiling with MSVC 9.
-if %PY_VER%==2.7 (
-    set SSSE3_FLAG=off
-) else (
-    set SSSE3_FLAG=on
-)
+@echo off
+
+set "PKG_CONFIG_PATH=%LIBRARY_LIB%\pkgconfig;%LIBRARY_PREFIX%\share\pkgconfig"
 
 :: MMX is returning errors when linking cairo in 64 bit systems.
 if %ARCH%==64 (
-    set MMX_FLAG=off
+    set MMX_FLAG=disabled
 ) else (
-    set MMX_FLAG=on
+    set MMX_FLAG=enabled
 )
 
-:: Compiling.
-make -f Makefile.win32 SSSE3=%SSSE3_FLAG% MMX=%MMX_FLAG%
+mkdir build
+meson setup build ^
+  --buildtype=release ^
+  --default-library=shared ^
+  --prefix=%LIBRARY_PREFIX% ^
+  --wrap-mode=nofallback ^
+  --backend=ninja ^
+  --libdir=lib ^
+  -Dmmx=%MMX_FLAG%
 
-:: Installing.
-mkdir %LIBRARY_INC%\pixman
-move pixman\pixman.h %LIBRARY_INC%\pixman
-move pixman\pixman-version.h %LIBRARY_INC%\pixman
+if errorlevel 1 exit 1
 
-move pixman\release\pixman-1.lib %LIBRARY_LIB%
+meson compile -v -C build -j %CPU_COUNT%
+if errorlevel 1 exit 1
+
+cd build && meson test
+if errorlevel 1 exit 1
+
+cd ..
+meson install -C build
+if errorlevel 1 exit 1
