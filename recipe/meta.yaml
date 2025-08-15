@@ -36,7 +36,7 @@ test:
     - if not exist %LIBRARY_INC%\\pixman-1\\pixman.h exit 2          # [win]
     - if not exist %LIBRARY_BIN%\\pixman-1-0.dll exit 3              # [win]
     - if not exist %LIBRARY_LIB%\\pixman-1.lib exit 4                # [win]
-    - if not exist %LIBRARY_LIB%\\pkgconfig\\pixman-1.pc exit 5       # [win]
+    - if not exist %LIBRARY_LIB%\\pkgconfig\\pixman-1.pc exit 5      # [win]
 
 about:
   home: https://www.pixman.org
