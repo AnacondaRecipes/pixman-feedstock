@@ -1,32 +1,23 @@
-@echo off
+@ECHO ON
 
-set "PKG_CONFIG_PATH=%LIBRARY_LIB%\pkgconfig;%LIBRARY_PREFIX%\share\pkgconfig"
+:: get the prefix in "mixed" form
+set "LIBRARY_PREFIX_M=%LIBRARY_PREFIX:\=/%"
 
-:: MMX is returning errors when linking cairo in 64 bit systems.
-if %ARCH%==64 (
-    set MMX_FLAG=disabled
-) else (
-    set MMX_FLAG=enabled
-)
-
-mkdir build
-meson setup build ^
+%BUILD_PREFIX%\Scripts\meson setup builddir ^
   --buildtype=release ^
-  --default-library=shared ^
-  --prefix=%LIBRARY_PREFIX% ^
-  --wrap-mode=nofallback ^
-  --backend=ninja ^
+  --prefix=%LIBRARY_PREFIX_M% ^
   --libdir=lib ^
-  -Dmmx=%MMX_FLAG%
-
+  --default-library=shared ^
+  --wrap-mode=nofallback ^
+  -Dtests=enabled ^
+  --backend=ninja
 if errorlevel 1 exit 1
 
-meson compile -v -C build -j %CPU_COUNT%
+ninja -v -C builddir -j %CPU_COUNT%
 if errorlevel 1 exit 1
 
-cd build && meson test
+ninja test -C builddir
 if errorlevel 1 exit 1
 
-cd ..
-meson install -C build
+ninja -C builddir install -j %CPU_COUNT%
 if errorlevel 1 exit 1
