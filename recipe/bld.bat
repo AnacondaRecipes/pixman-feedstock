@@ -5,7 +5,7 @@ set "LIBRARY_PREFIX_M=%LIBRARY_PREFIX:\=/%"
 
 set "EXTRA_MESON_ARGS="
 if "%ARCH%"=="arm64" (
-  set "EXTRA_MESON_ARGS=-Da64-neon=disabled -Dmmx=disabled -Dsse2=disabled -Dssse3=disabled"
+  set "EXTRA_MESON_ARGS=-Dmmx=disabled -Dsse2=disabled -Dssse3=disabled"
 )
 
 %BUILD_PREFIX%\Scripts\meson setup builddir ^
