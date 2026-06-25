@@ -21,9 +21,10 @@ requirements:
     - {{ compiler('c') }}
     - {{ stdlib("c") }}
     - {{ compiler('cxx') }}
-    - meson
     - ninja-base
     - pkg-config
+  host:
+    - meson
 
 test:
   commands:
