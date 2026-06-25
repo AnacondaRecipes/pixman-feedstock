@@ -3,14 +3,20 @@
 :: get the prefix in "mixed" form
 set "LIBRARY_PREFIX_M=%LIBRARY_PREFIX:\=/%"
 
-%BUILD_PREFIX%\Scripts\meson setup builddir ^
+set "EXTRA_MESON_ARGS="
+if "%ARCH%"=="arm64" (
+  set "EXTRA_MESON_ARGS=-Dmmx=disabled -Dsse2=disabled -Dssse3=disabled"
+)
+
+meson setup builddir ^
   --buildtype=release ^
   --prefix=%LIBRARY_PREFIX_M% ^
   --libdir=lib ^
   --default-library=shared ^
   --wrap-mode=nofallback ^
   -Dtests=enabled ^
-  --backend=ninja
+  --backend=ninja ^
+  %EXTRA_MESON_ARGS%
 if errorlevel 1 exit 1
 
 ninja -v -C builddir -j %CPU_COUNT%
